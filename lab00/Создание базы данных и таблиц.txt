@@ -1,0 +1,116 @@
+-- Создаём базу данных (если ещё не создана) и выбираем её
+CREATE DATABASE IF NOT EXISTS tutorhub;
+USE tutorhub;
+
+-- Таблица типов пользователей
+CREATE TABLE user_type (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  type_name VARCHAR(100) NOT NULL
+);
+
+-- Основная таблица пользователей (обратите внимание на использование backticks для имени "user", т.к. это зарезервированное слово)
+CREATE TABLE `user` (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  firstname VARCHAR(50) NOT NULL,
+  lastname VARCHAR(50) NOT NULL,
+  birthdate DATE NOT NULL,
+  subject VARCHAR(100) NOT NULL,
+  class VARCHAR(10) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  phone VARCHAR(20) NOT NULL,
+  telegramm VARCHAR(20) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  user_type_id INT not null,
+  FOREIGN KEY (user_type_id) REFERENCES user_type(id)
+);
+
+-- Таблица дополнительной информации о типах пользователей
+CREATE TABLE user_type_info (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_type_id INT not null,
+  user_info_name VARCHAR(100) NOT NULL,
+  FOREIGN KEY (user_type_id) REFERENCES user_type(id)
+);
+
+-- Таблица значений дополнительной информации пользователя
+CREATE TABLE user_info (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_type_info_id INT not null,
+  user_id INT not null,
+  value VARCHAR(100) NOT NULL,
+  FOREIGN KEY (user_type_info_id) REFERENCES user_type_info(id),
+  FOREIGN KEY (user_id) REFERENCES `user`(id)
+);
+
+-- Таблица для связи учеников и репетиторов
+CREATE TABLE students_tutors (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  student_id INT not null,
+  tutor_id INT not null,
+  FOREIGN KEY (student_id) REFERENCES `user`(id),
+  FOREIGN KEY (tutor_id) REFERENCES `user`(id)
+);
+
+-- Таблица баллов учеников (можно добавить внешний ключ, если требуется)
+CREATE TABLE points (
+  student_id INT PRIMARY KEY,
+  points INT,
+  FOREIGN KEY (student_id) REFERENCES `user`(id)
+);
+
+-- Таблица домашних заданий
+CREATE TABLE homework (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  number_lesson INT NOT NULL,
+  topic_lesson VARCHAR(255),
+  homework TEXT,
+  material_hw MEDIUMBLOB,
+  finish_hw MEDIUMBLOB
+);
+
+-- Таблица для связи учеников и домашних заданий с оценками
+CREATE TABLE students_homework (
+  student_id INT not null,
+  homework_id INT not null,
+  score INT NOT NULL,
+  PRIMARY KEY (student_id, homework_id),
+  FOREIGN KEY (student_id) REFERENCES `user`(id),
+  FOREIGN KEY (homework_id) REFERENCES homework(id)
+);
+
+-- Таблица дополнительных материалов для учеников
+CREATE TABLE additional_materials (
+  student_id INT PRIMARY KEY,
+  add_materials LONGBLOB,
+  FOREIGN KEY (student_id) REFERENCES `user`(id)
+);
+
+-- Таблица расписания (месячная)
+CREATE TABLE timetable (
+  student_id INT NOT NULL,
+  month_id INT NOT NULL,
+  name_month VARCHAR(50),
+  PRIMARY KEY (student_id, month_id),
+  FOREIGN KEY (student_id) REFERENCES `user`(id)
+);
+
+-- Таблица расписания по дням
+CREATE TABLE timetable_day (
+  student_id INT NOT NULL,
+  month_id INT NOT NULL,
+  day_id VARCHAR(50) NOT NULL,
+  PRIMARY KEY (student_id, month_id, day_id),
+  FOREIGN KEY (student_id) REFERENCES `user`(id)
+);
+
+-- Таблица оплаты
+CREATE TABLE paying (
+  paying_id INT AUTO_INCREMENT PRIMARY KEY,
+  student_id INT NOT NULL,
+  money DECIMAL(10,2),
+  number_lesson INT,
+  data_start DATE,
+  data_finish DATE,
+  status VARCHAR(50),
+  FOREIGN KEY (student_id) REFERENCES `user`(id)
+);

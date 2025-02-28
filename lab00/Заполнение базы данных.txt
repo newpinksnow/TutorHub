@@ -1,0 +1,112 @@
+SHOW VARIABLES LIKE 'secure_file_priv';
+USE tutorhub;
+
+-- Заполняем таблицу user_type (типы пользователей)
+INSERT INTO user_type (type_name) VALUES
+('Преподаватель'),
+('Ученик');
+
+-- Заполняем таблицу user (основная информация о пользователях)
+INSERT INTO user (firstname, lastname, birthdate, email, phone, telegramm, password_hash, user_type_id) VALUES
+('Иван', 'Петров', '1990-05-12', 'ivan.petrov@example.com', '+79998887766', '@ivanpetrov', 'pass123', 1),
+('Мария', 'Сидорова', '2002-08-21', 'maria.sidorova@example.com', '+79995554433', '@mariasidorova', 'pass234', 2),
+('Алексей', 'Иванов', '1995-07-18', 'alex.ivanov@example.com', '+79992221100', '@alexivanov', 'pass345', 1),
+('Ольга', 'Кузнецова', '2001-01-30', 'olga.kuznetsova@example.com', '+79991112233', '@olgakuznetsova', 'pass456', 2),
+('Дмитрий', 'Смирнов', '1987-04-03', 'dmitry.smirnov@example.com', '+79990008877', '@dmitrysmirnov', 'pass567', 1),
+('Анна', 'Васильева', '1999-12-25', 'anna.vasilyeva@example.com', '+79997775522', '@annavasilyeva', 'pass678', 2),
+('Егор', 'Николаев', '1992-06-14', 'egor.nikolaev@example.com', '+79996661111', '@egornikolaev', 'pass789', 1),
+('Татьяна', 'Федорова', '2000-09-05', 'tatiana.fedorova@example.com', '+79993332244', '@tatianafedorova', 'pass890', 2),
+('Артем', 'Михайлов', '1996-02-11', 'artem.mikhailov@example.com', '+79992220099', '@artemmikhailov', 'pass901', 1),
+('Юлия', 'Алексеева', '1998-11-22', 'yulia.alexeeva@example.com', '+79991119955', '@yuliaalexeeva', 'pass012', 2),
+('Максим', 'Белов', '1993-03-17', 'maxim.belov@example.com', '+79995556677', '@maximbelov', 'pass111', 1),
+('Светлана', 'Григорьева', '2005-07-28', 'svetlana.grigorieva@example.com', '+79994443300', '@svetlanagrigorieva', 'pass222', 2),
+('Андрей', 'Сергеев', '1991-10-10', 'andrey.sergeev@example.com', '+79993338888', '@andreysergeev', 'pass333', 1),
+('Оксана', 'Павлова', '2003-05-19', 'oksana.pavlova@example.com', '+79992226666', '@oksanapavlova', 'pass444', 2),
+('Константин', 'Егоров', '1997-08-30', 'konstantin.egorov@example.com', '+79990009911', '@konstantinegorov', 'pass555', 1);
+
+
+-- Заполняем таблицу user_type_info
+INSERT INTO user_type_info (user_type_id, user_info_name) VALUES
+(1, 'Опыт работы'),
+(2, 'Класс'), 
+(1, 'Рейтинг'), 
+(2, 'Предмет');
+
+-- Заполняем таблицу user_info
+INSERT INTO user_info (user_type_info_id, user_id, value) VALUES
+(1, 16, '10 лет'),
+(3, 16,'5.0'), 
+(1, 18, '1 год'),
+(3, 18,'4.0'), 
+(1, 20, '9 лет'),
+(3, 20,'5.0'), 
+(1, 22, '1 год'),
+(3, 22,'4.5'), 
+(1, 24, '3 года'),
+(3, 24,'4.6'), 
+(1, 26, '4 года'),
+(3, 26,'4.6'), 
+(1, 28, '2 года'),
+(3, 28,'4.0'), 
+(1, 30, '2 года'),
+(3, 30,'5.0'), 
+
+(2, 17, '9'), 
+(4, 17, 'Математика'), 
+(2, 19, '5'), 
+(4, 19, 'Математика'), 
+(2, 21, '6'), 
+(4, 21, 'Русский язык'), 
+(2, 23, '9'), 
+(4, 23, 'Геометрия'), 
+(2, 25, '9'), 
+(4, 25, 'Математика'), 
+(2, 27, '5'), 
+(4, 27, 'История'), 
+(2, 29, '9'), 
+(4, 29, 'Математика');
+
+
+-- Заполняем таблицу students_tutors (связь учеников и репетиторов)
+INSERT INTO students_tutors (student_id, tutor_id) VALUES
+(17, 16), (19, 18), (21, 20), (23, 22), (25, 24), (27, 26), (29, 28), (17, 30);
+
+-- Заполняем таблицу points (баллы учеников)
+INSERT INTO points (student_id, points) VALUES
+(17, 5), (19, 90), (21, 58), (23, 2), (25, 87), (27, 8), (29, 87);
+
+-- Заполняем таблицу homework (домашние задания)
+INSERT INTO homework (number_lesson, topic_lesson, homework, material_hw, finish_hw) VALUES
+(1, 'Уравнения', 'Решить уравнения с фото', LOAD_FILE('C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\1.png') , NULL),
+(2, 'Задачи', 'Построить все виды треугольников', NULL, NULL),
+(1, 'Ньютон', 'Выучить законы Ньютона', NULL, NULL),
+(4, 'Реакции', 'Запомнить все реакции окисления', NULL, NULL),
+(4, 'Правила', 'Прорешать упражнения с фото, используя правила с урока',LOAD_FILE('C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\2.png'), NULL),
+(15, 'Подготовка к контрольной работе', 'Подготовиться к контрольной по теме Вторая мировая война', NULL, NULL);
+
+-- Заполняем таблицу students_homework ( связь учеников и их домашнего задания)
+INSERT INTO students_homework (student_id, homework_id, score) VALUES
+(17, 1, 5), (19, 1, 0), (29, 1, 8), (23, 2, 2), (21, 5, 9), (27, 6, 2), (25, 5, 7);
+
+-- Заполняем таблицу additional_materials (дополнительные материалы)
+INSERT INTO additional_materials (student_id, add_materials) VALUES
+(17, LOAD_FILE('C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\3.png')), (19, LOAD_FILE('C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\3.png')), (29, LOAD_FILE('C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\3.png')), (25, LOAD_FILE('C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\3.png'));
+
+-- Заполняем таблицу timetable (расписание по месяцам)
+INSERT INTO timetable (student_id, month_id, name_month) VALUES
+(17, 1, 'Январь'), (19, 1, 'Январь'), (21, 1,'Январь'), (23, 1, 'Январь'), (25, 1, 'Январь'), (27, 1, 'Январь'), (29, 1, 'Январь'), (29, 2, 'Февраль');
+
+-- Заполняем таблицу timetable_day (расписание по дням)
+INSERT INTO timetable_day (student_id, month_id, day_id) VALUES
+(17, 1, '1'), (19, 1, '2'), (21, 1, '3'), (23, 1, '4'), (25, 1, '5'), (27, 1, '6'), (29, 1, '7'), (29, 2, '7');
+
+-- Заполняем таблицу paying (оплата)
+INSERT INTO paying (student_id, money, number_lesson, data_start, data_finish, status) VALUES
+(17, 10000.00, 10, '2024-01-01', '2024-02-01', 'Оплачено'),
+(19, 1500.00, 1, '2024-02-01', '2024-02-01', 'Не оплачено'),
+(21, 12000.00, 12, '2024-03-01', '2024-05-01', 'Оплачено'),
+(23, 20000.00, 20, '2024-04-01', '2024-08-01', 'Оплачено'),
+(25, 18000.00, 18, '2024-05-01', '2024-12-01', 'Не оплачено'),
+(27, 1800.00, 1, '2024-05-01', '2024-05-01', 'Не оплачено'),
+(29, 5800.00, 3, '2024-05-01', '2024-06-01', 'Оплачено');
+
