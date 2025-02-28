@@ -1,0 +1,37 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- Подключение к MySQL -->
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/tutorhub?useSSL=false&amp;serverTimezone=UTC</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">Smal2020</property>
+
+        <!-- Диалект для MySQL -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+
+        <!-- Автоматическое создание схемы -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+
+        <!-- Логирование SQL -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+
+        <mapping class="com.example.model.User"/>
+        <mapping class="com.example.model.UserType"/>
+        <mapping class="com.example.model.UserTypeInfo"/>
+        <mapping class="com.example.model.UserInfo"/>
+        <mapping class="com.example.model.StudentsTutors"/>
+        <mapping class="com.example.model.Points"/>
+        <mapping class="com.example.model.Homework"/>
+        <mapping class="com.example.model.StudentsHomework"/>
+        <mapping class="com.example.model.AdditionalMaterials"/>
+        <mapping class="com.example.model.Timetable"/>
+        <mapping class="com.example.model.Paying"/>
+
+
+
+    </session-factory>
+</hibernate-configuration>

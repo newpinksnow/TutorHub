@@ -1,0 +1,1074 @@
+openapi: 3.1.1
+info:
+  title: TutorHub API
+  description: API для управления учебным процессом
+  version: 1.0.0
+servers:
+  - url: https://api.tutorhub.com/v1
+    description: Production server
+  - url: https://sandbox.api.tutorhub.com/v1
+    description: Sandbox server for testing
+paths:
+  /register:
+    post:
+      summary: Регистрация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                lastname:
+                  type: string
+                birthdate:
+                  type: string
+                  format: date
+                email:
+                  type: string
+                  format: email
+                phone:
+                  oneOf:
+                  - type: string
+                    pattern: '^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$'
+                    example: "+7 (999) 123-45-67"
+                  - type: string
+                    pattern: '^\8 \(\d{3}\) \d{3}-\d{4}$'
+                    example: "8 (123) 456-7890"
+                telegram:
+                  type: string
+                  pattern: '^\@.+$'
+                  example: "@example"
+                password:
+                  type: string
+                user_type_id:
+                  oneOf:
+                  - type: string
+                    pattern: '^Преподаватель$'
+                    example: "Преподаватель"
+                  - type: string
+                    pattern: '^Ученик$'
+                    example: "Ученик"
+              required:
+                - firstname
+                - lastname
+                - email
+                - password
+                - user_type_id
+      responses:
+        '201':
+          description: Пользователь успешно зарегистрирован
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  user_id:
+                    type: integer
+                  message:
+                    type: string
+        '400':
+          description: Неверные данные в запросе
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+
+  /login:
+    post:
+      summary: Авторизация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Успешная авторизация
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  user_id:
+                    type: integer
+                  user_type:
+                    type: string
+                  token:
+                    type: string
+        '401':
+          description: Неверные учетные данные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+
+  /users/{user_id}/profile:
+    get:
+      summary: Получение данных профиля
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешное получение данных профиля
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                  firstname:
+                    type: string
+                  lastname:
+                    type: string
+                  birthdate:
+                    type: string
+                    format: date
+                  email:
+                    type: string
+                    format: email
+                  phone:
+                    oneOf:
+                    - type: string
+                      pattern: '^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$'
+                      example: "+7 (999) 123-45-67"
+                    - type: string
+                      pattern: '^\8 \(\d{3}\) \d{3}-\d{4}$'
+                      example: "8 (123) 456-7890"
+                  telegram:
+                    type: string
+                    pattern: '^\@.+$'
+                  password:
+                    type: string
+                  user_type_id:
+                    oneOf:
+                    - type: string
+                      pattern: '^Преподаватель$'
+                    - type: string
+                      pattern: '^Ученик$'
+        '404':
+          description: Пользователь не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+
+    patch:
+      summary: Обновление данных профиля
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                  description: Новое имя пользователя
+                lastname:
+                  type: string
+                  description: Новая фамилия пользователя
+                email:
+                  type: string
+                  format: email
+                  description: Новый email пользователя
+                phone:
+                  oneOf:
+                    - type: string
+                      pattern: '^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$'
+                      example: "+7 (999) 123-45-67"
+                    - type: string
+                      pattern: '^\8 \(\d{3}\) \d{3}-\d{4}$'
+                      example: "8 (123) 456-7890"
+                  description: Новый номер телефона пользователя
+                telegram:
+                  type: string
+                  pattern: '^\@.+$'
+                  description: Новый Telegram пользователя
+                password:
+                    type: string
+              example:
+                firstname: "Иван"
+                lastname: "Иванов"
+                email: "ivan.new@example.com"
+      responses:
+        '200':
+          description: Данные профиля успешно обновлены
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      user_id:
+                        type: integer
+                      firstname:
+                        type: string
+                      lastname:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+                      telegram:
+                        type: string
+                      password:
+                        type: string
+                example:
+                  status: "success"
+                  message: "Profile updated successfully"
+                  data:
+                    user_id: 123
+                    firstname: "Иван"
+                    lastname: "Иванов"
+                    email: "ivan.new@example.com"
+                    phone: "+71234567890"
+                    telegram: "@ivanov"
+                    password: "1234"
+        '400':
+          description: Неверные данные в запросе
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                        message:
+                          type: string
+                example:
+                  status: "error"
+                  message: "Invalid data provided"
+                  errors:
+                    - field: "email"
+                      message: "Email is invalid"
+        '404':
+          description: Пользователь не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: "error"
+                  message: "User not found"
+
+  /students/{student_id}/homework:
+    get:
+      summary: Получение списка домашних заданий для ученика
+      parameters:
+        - name: student_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешное получение списка заданий
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  homework:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        number_lesson:
+                          type: integer
+                        topic_lesson:
+                          type: string
+                        homework:
+                          type: string
+                        score:
+                          type: integer
+                          nullable: true
+        '404':
+          description: Ученик не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+
+  /students/{student_id}/homework/{homework_id}:
+    post:
+      summary: Загрузка выполненного задания учеником
+      parameters:
+        - name: student_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID студента
+        - name: homework_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID домашнего задания
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Файл с выполненным заданием
+      responses:
+        '200':
+          description: Файл успешно загружен
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      homework_id:
+                        type: integer
+                      file_url:
+                        type: string
+                example:
+                  status: "success"
+                  message: "Homework file uploaded successfully"
+                  data:
+                    homework_id: 1
+                    file_url: "https://api.tutorhub.com/files/homework_1.pdf"
+        '400':
+          description: Неверные данные в запросе
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: "error"
+                  message: "Invalid file format"
+        '404':
+          description: Задание или студент не найдены
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: "error"
+                  message: "Homework or student not found"
+
+  /homework/{homework_id}/grade:
+    patch:
+      summary: Оценка задания преподавателем
+      parameters:
+        - name: homework_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID домашнего задания
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                score:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+                  description: Оценка за задание (от 1 до 10)
+              required:
+                - score
+      responses:
+        '200':
+          description: Оценка успешно выставлена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      homework_id:
+                        type: integer
+                      score:
+                        type: integer
+                example:
+                  status: "success"
+                  message: "Homework graded successfully"
+                  data:
+                    homework_id: 1
+                    score: 9
+        '400':
+          description: Неверные данные в запросе
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: "error"
+                  message: "Invalid score value"
+        '404':
+          description: Задание не найдено
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: "error"
+                  message: "Homework not found"
+
+  /homework:
+    post:
+      summary: Добавление задания преподавателем
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                number_lesson:
+                  type: integer
+                  description: Номер урока
+                topic_lesson:
+                  type: string
+                  description: Тема урока
+                homework:
+                  type: string
+                  description: Описание задания
+                material_hw:
+                  type: string
+                  format: binary
+                  description: Материалы для задания (файл)
+              required:
+                - number_lesson
+                - topic_lesson
+                - homework
+      responses:
+        '201':
+          description: Задание успешно добавлено
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      homework_id:
+                        type: integer
+                      number_lesson:
+                        type: integer
+                      topic_lesson:
+                        type: string
+                      homework:
+                        type: string
+                example:
+                  status: "success"
+                  message: "Homework created successfully"
+                  data:
+                    homework_id: 1
+                    number_lesson: 1
+                    topic_lesson: "Алгебра"
+                    homework: "Решить задачи 1-10"
+        '400':
+          description: Неверные данные в запросе
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: "error"
+                  message: "Invalid data provided"
+
+  /students/{student_id}/points:
+    get:
+      summary: Получение текущих баллов ученика
+      parameters:
+        - name: student_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID ученика
+      responses:
+        '200':
+          description: Успешное получение баллов
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  student_id:
+                    type: integer
+                  points:
+                    type: integer
+                  score:
+                    type: integer
+                example:
+                  student_id: 123
+                  points: 100
+                  score: 5
+        '404':
+          description: Ученик не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: "error"
+                  message: "Student not found"
+
+    patch:
+      summary: Обновление баллов ученика
+      description: Обновляет баллы и оценку ученика (например, за выполненное задание).
+      parameters:
+        - name: student_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID ученика
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                points:
+                  type: integer
+                  description: Новое количество баллов
+                score:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+                  description: Новая оценка (от 1 до 10)
+              required:
+                - points
+                - score
+      responses:
+        '200':
+          description: Баллы успешно обновлены
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      student_id:
+                        type: integer
+                      points:
+                        type: integer
+                      score:
+                        type: integer
+                example:
+                  status: "success"
+                  message: "Points updated successfully"
+                  data:
+                    student_id: 123
+                    points: 120
+                    score: 6
+        '400':
+          description: Неверные данные в запросе
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: "error"
+                  message: "Invalid data provided"
+        '404':
+          description: Ученик не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: "error"
+                  message: "Student not found"
+
+  /students/{student_id}/timetable:
+    get:
+      summary: Получение расписания занятий
+      parameters:
+        - name: student_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: month
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешное получение расписания
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timetable:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        month:
+                          type: string
+                        days:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              day:
+                                type: string
+                                format: date
+                              subject:
+                                type: string
+                              time:
+                                type: string
+        '404':
+          description: Ученик не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+
+  /tutors/{tutor_id}/lessons:
+    post:
+      summary: Добавление нового занятия
+      description: Добавляет новое занятие для указанного студента.
+      parameters:
+        - name: tutor_id
+          in: path
+          required: true
+          description: ID преподавателя
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                student_id:
+                  type: integer
+                  description: ID студента
+                date:
+                  type: string
+                  format: date
+                  description: Дата занятия (в формате YYYY-MM-DD)
+                topic:
+                  type: string
+                  description: Тема занятия
+                homework:
+                  type: string
+                  description: Домашнее задание
+              required:
+                - student_id
+                - date
+                - topic
+      responses:
+        '201':
+          description: Занятие успешно добавлено
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Занятие успешно добавлено"
+                  lesson:
+                    $ref: '#/components/schemas/Lesson'
+        '400':
+          description: Неверный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Неверный запрос"
+        '404':
+          description: Студент или преподаватель не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Студент или преподаватель не найден"
+
+
+  /students/{student_id}/materials:
+    get:
+      summary: Получение списка дополнительных материалов для ученика
+      parameters:
+        - name: student_id
+          in: path
+          required: true
+          description: ID студента
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  materials:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Material'
+        '404':
+          description: Студент не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Студент не найден"
+    post:
+      summary: Загрузка нового материала преподавателем
+      parameters:
+        - name: student_id
+          in: path
+          required: true
+          description: ID студента
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Файл материала
+                name:
+                  type: string
+                  description: Название материала
+                type:
+                  type: string
+                  description: Тип материала (например, 'link' или 'file')
+                url:
+                  type: string
+                  description: URL материала (если тип 'link')
+      responses:
+        '201':
+          description: Материал успешно загружен
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Материал успешно загружен"
+                  material:
+                    $ref: '#/components/schemas/Material'
+        '400':
+          description: Неверный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Неверный запрос"
+
+  /students/{student_id}/payment:
+    get:
+      summary: Получение информации о статусе оплаты
+      parameters:
+        - name: student_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешное получение информации о платежах
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        paying_id:
+                          type: integer
+                        money:
+                          type: number
+                        number_lesson:
+                          type: integer
+                        data_start:
+                          type: string
+                          format: date
+                        data_finish:
+                          type: string
+                          format: date
+                        status:
+                          type: string
+        '404':
+          description: Ученик не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+
+  /tutors/{tutor_id}/reminders:
+    post:
+      summary: Отправка напоминания об оплате
+      parameters:
+        - name: tutor_id
+          in: path
+          required: true
+          description: ID преподавателя
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                student_id:
+                  type: integer
+                  description: ID студента, которому отправляется напоминание
+                message:
+                  type: string
+                  description: Текст напоминания
+              required:
+                - student_id
+                - message
+      responses:
+        '200':
+          description: Напоминание успешно отправлено
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Напоминание успешно отправлено"
+        '400':
+          description: Неверный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Неверный запрос"
+        '404':
+          description: Студент или преподаватель не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Студент или преподаватель не найден"
+
+components:
+  schemas:
+    Material:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор материала
+        name:
+          type: string
+          description: Название материала
+        type:
+          type: string
+          description: Тип материала (например, 'link' или 'file')
+        url:
+          type: string
+          description: URL материала (если тип 'link')
+          openapi: 3.1.1
+    Lesson:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор занятия
+        student_id:
+          type: integer
+          description: ID студента
+        tutor_id:
+          type: integer
+          description: ID преподавателя
+        date:
+          type: string
+          format: date
+          description: Дата занятия
+        topic:
+          type: string
+          description: Тема занятия
+        homework:
+          type: string
+          description: Домашнее задание
