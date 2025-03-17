@@ -5,15 +5,15 @@
     <session-factory>
         <!-- Подключение к MySQL -->
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/tutorhub?useSSL=false&amp;serverTimezone=UTC</property>
+        <property name="hibernate.connection.url">  jdbc:mysql://db:3306/tutor-hub?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC</property>
         <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">Smal2020</property>
+        <property name="hibernate.connection.password">12345</property>
 
         <!-- Диалект для MySQL -->
         <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
 
         <!-- Автоматическое создание схемы -->
-        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.hbm2ddl.auto">create</property>
 
         <!-- Логирование SQL -->
         <property name="hibernate.show_sql">true</property>

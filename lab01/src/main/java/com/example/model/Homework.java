@@ -20,8 +20,9 @@ public class Homework {
     private String homeworkText;
 
     @Lob
-    @Column(name = "material_hw")
+    @Column(name = "material_hw", columnDefinition = "LONGBLOB")
     private byte[] materialHw;
+
 
     @Lob
     @Column(name = "finish_hw")

@@ -2,6 +2,7 @@ package com.example.model;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import com.exampl.utils.PasswordUtil;
 import java.util.List;
 
 @Entity
@@ -67,14 +68,14 @@ public class User {
 
     public User() {}
 
-    public User(String firstName, String lastName, Date birthDate, String email, String phone, String telegram, String passwordHash, UserType userType) {
+    public User(String firstName, String lastName, Date birthDate, String email, String phone, String telegram, String password, UserType userType) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
         this.email = email;
         this.phone = phone;
         this.telegram = telegram;
-        this.passwordHash = passwordHash;
+        this.passwordHash = PasswordUtil.hashPassword(password);
         this.userType = userType;
     }
 
@@ -102,7 +103,6 @@ public class User {
     public void setEmail(String email) { this.email = email; }
     public void setPhone(String phone) { this.phone = phone; }
     public void setTelegram(String telegram) { this.telegram = telegram; }
-    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
     public void setUserType(UserType userType) { this.userType = userType; }
     public void setUserInfos(List<UserInfo> userInfos) { this.userInfos = userInfos; }
     public void setTutors(List<StudentsTutors> tutors) { this.tutors = tutors; }
@@ -112,6 +112,12 @@ public class User {
     public void setTimetable(List<Timetable> timetable) { this.timetable = timetable; }
     public void setPayments(List<Paying> payments) { this.payments = payments; }
 
+    // ✅ Устанавливаем хэшированный пароль
+    public void setPassword(String password) {
+        this.passwordHash = PasswordUtil.hashPassword(password);
+    }
+
+
     @Override
     public String toString() {
         return "User{" +
@@ -120,4 +126,7 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 '}';
     }
+
+
+
 }

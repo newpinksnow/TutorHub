@@ -1,0 +1,26 @@
+services:
+  app:
+    build: .
+    container_name: tutor-hub-app
+    ports:
+      - "1212:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/tutor-hub
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 12345
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.3
+    container_name: tutor-hub-db
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: tutor-hub
+    ports:
+      - "1313:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:

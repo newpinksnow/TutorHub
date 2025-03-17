@@ -1,4 +1,5 @@
 package com.example.model;
+import java.util.Objects;
 
 import jakarta.persistence.*;
 
@@ -25,6 +26,20 @@ public class StudentsHomework {
         this.homework = homework;
         this.score = score;
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StudentsHomework that = (StudentsHomework) o;
+        return Objects.equals(student, that.student) && Objects.equals(homework, that.homework);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(student, homework);
+    }
+
+
 
     public User getStudent() { return student; }
     public Homework getHomework() { return homework; }

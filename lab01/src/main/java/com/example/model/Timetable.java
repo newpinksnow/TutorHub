@@ -1,4 +1,5 @@
 package com.example.model;
+import java.util.Objects;
 
 import jakarta.persistence.*;
 import java.util.Date;
@@ -35,6 +36,19 @@ public class Timetable {
                 "student=" + student +
                 ", dateLesson=" + dateLesson +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Timetable that = (Timetable) o;
+        return Objects.equals(student, that.student) && Objects.equals(dateLesson, that.dateLesson);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(student, dateLesson);
     }
 }
 
