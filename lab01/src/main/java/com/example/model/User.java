@@ -2,7 +2,7 @@ package com.example.model;
 
 import jakarta.persistence.*;
 import java.util.Date;
-import com.exampl.utils.PasswordUtil;
+import com.example.utils.PasswordUtil;
 import java.util.List;
 
 @Entity
